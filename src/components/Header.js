@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {useNavigate} from "react-router-dom"
 import {
   MDBNavbar,
   MDBContainer,
@@ -16,7 +17,7 @@ import { setLogout } from "../redux/features/authSlice";
 const Header = () => {
   const [show, setShow] = useState(false);
   const dispatch = useDispatch();
-
+  const navigate= useNavigate();
   const handleLogout = () => {
     dispatch(setLogout());
   };
@@ -48,7 +49,8 @@ const Header = () => {
             )}
             <MDBNavbarItem>
               <MDBNavbarLink href="/">
-                <p className="header-text">Home</p>
+               <p className="header-text">Home</p>
+               
               </MDBNavbarLink>
             </MDBNavbarItem>
             {user?.result?._id && (

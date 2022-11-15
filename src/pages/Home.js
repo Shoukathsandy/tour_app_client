@@ -11,11 +11,11 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(getTours());
-  }, []);
+  }, [tours]);
 
-  if (loading) {
-    return <Spinner />;
-  }
+  // if (loading) {
+  //   return <Spinner />;
+  // }
   return (
     <div
       style={{
