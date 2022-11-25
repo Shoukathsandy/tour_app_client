@@ -42,6 +42,11 @@ const Login = () => {
     setFormValue({ ...formValue, [name]: value });
   };
 
+
+  const devEnv = process.env.NODE_ENV !== "production";
+
+  
+
   const googleSuccess = (resp) => {
     const email = resp?.profileObj?.email;
     const name = resp?.profileObj?.name;
@@ -108,7 +113,7 @@ const Login = () => {
           </MDBValidation>
           <br />
           {/* <GoogleLogin
-            clientId="your client id"
+            clientId="Your Client Id"
             render={(renderProps) => (
               <MDBBtn
                 style={{ width: "100%" }}
