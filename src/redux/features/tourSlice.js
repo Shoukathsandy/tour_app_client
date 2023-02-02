@@ -17,9 +17,9 @@ export const createTour = createAsyncThunk(
 
 export const getTours = createAsyncThunk(
   "tour/getTours",
-  async (_, { rejectWithValue }) => {
+  async (page, { rejectWithValue }) => {
     try {
-      const response = await api.getTours();
+      const response = await api.getTours(page);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -32,6 +32,18 @@ export const getTour = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await api.getTour(id);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const likeTour = createAsyncThunk(
+  "tour/likeTour",
+  async ({ _id }, { rejectWithValue }) => {
+    try {
+      const response = await api.likeTour(_id);
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -78,14 +90,59 @@ export const updateTour = createAsyncThunk(
   }
 );
 
+export const searchTours = createAsyncThunk(
+  "tour/searchTours",
+  async (searchQuery, { rejectWithValue }) => {
+    try {
+      const response = await api.getToursBySearch(searchQuery);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getToursByTag = createAsyncThunk(
+  "tour/getToursByTag",
+  async (tag, { rejectWithValue }) => {
+    try {
+      const response = await api.getTagTours(tag);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getRelatedTours = createAsyncThunk(
+  "tour/getRelatedTours",
+  async (tags, { rejectWithValue }) => {
+    try {
+      const response = await api.getRelatedTours(tags);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
 const tourSlice = createSlice({
   name: "tour",
   initialState: {
     tour: {},
     tours: [],
     userTours: [],
+    tagTours: [],
+    relatedTours: [],
+    currentPage: 1,
+    numberOfPages: null,
     error: "",
     loading: false,
+  },
+  reducers: {
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
   },
   extraReducers: {
     [createTour.pending]: (state, action) => {
@@ -104,7 +161,9 @@ const tourSlice = createSlice({
     },
     [getTours.fulfilled]: (state, action) => {
       state.loading = false;
-      state.tours = action.payload;
+      state.tours = action.payload.data;
+      state.numberOfPages = action.payload.numberOfPages;
+      state.currentPage = action.payload.currentPage;
     },
     [getTours.rejected]: (state, action) => {
       state.loading = false;
@@ -137,7 +196,6 @@ const tourSlice = createSlice({
     },
     [deleteTour.fulfilled]: (state, action) => {
       state.loading = false;
-      console.log("action", action);
       const {
         arg: { id },
       } = action.meta;
@@ -155,7 +213,6 @@ const tourSlice = createSlice({
     },
     [updateTour.fulfilled]: (state, action) => {
       state.loading = false;
-      console.log("action", action);
       const {
         arg: { id },
       } = action.meta;
@@ -172,7 +229,58 @@ const tourSlice = createSlice({
       state.loading = false;
       state.error = action.payload.message;
     },
+    [likeTour.pending]: (state, action) => {},
+    [likeTour.fulfilled]: (state, action) => {
+      state.loading = false;
+      const {
+        arg: { _id },
+      } = action.meta;
+      if (_id) {
+        state.tours = state.tours.map((item) =>
+          item._id === _id ? action.payload : item
+        );
+      }
+    },
+    [likeTour.rejected]: (state, action) => {
+      state.error = action.payload.message;
+    },
+
+    [searchTours.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [searchTours.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.tours = action.payload;
+    },
+    [searchTours.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+    [getToursByTag.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getToursByTag.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.tagTours = action.payload;
+    },
+    [getToursByTag.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
+    [getRelatedTours.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getRelatedTours.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.relatedTours = action.payload;
+    },
+    [getRelatedTours.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload.message;
+    },
   },
 });
+
+export const { setCurrentPage } = tourSlice.actions;
 
 export default tourSlice.reducer;

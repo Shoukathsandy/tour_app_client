@@ -27,6 +27,7 @@ const Dashboard = () => {
     if (userId) {
       dispatch(getToursByUser(userId));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const excerpt = (str) => {
@@ -55,15 +56,21 @@ const Dashboard = () => {
         alignContent: "center",
       }}
     >
-      <h4 className="text-center">Dashboard: {user?.result?.name}</h4>
-      <hr style={{ maxWidth: "570px" }} />
+      {userTours.length === 0 && (
+        <h3>No tour available with the user: {user?.result?.name}</h3>
+      )}
+
+      {userTours.length > 0 && (
+        <>
+          <h5 className="text-center">Dashboard: {user?.result?.name}</h5>
+          <hr style={{ maxWidth: "570px" }} />
+        </>
+      )}
+
       {userTours &&
         userTours.map((item) => (
           <MDBCardGroup key={item._id}>
-            <MDBCard
-              style={{ maxWidth: "600px" }}
-              className="mt-2"
-            >
+            <MDBCard style={{ maxWidth: "600px" }} className="mt-2">
               <MDBRow className="g-0">
                 <MDBCol md="4">
                   <MDBCardImage

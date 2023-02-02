@@ -14,12 +14,14 @@ import SingleTour from "./pages/SingleTour";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import NotFound from "./pages/NotFound";
+import TagTours from "./pages/TagTours";
 
 function App() {
   const dispatch = useDispatch();
   const user = JSON.parse(localStorage.getItem("profile"));
   useEffect(() => {
     dispatch(setUser(user));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <BrowserRouter>
@@ -27,8 +29,10 @@ function App() {
         <Header />
         <ToastContainer />
         <Routes>
-          <Route path="/" exact element={<Home />} />
-          <Route path="/login"   element={<Login />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/tours/search" element={<Home />} />
+          <Route path="/tours/tag/:tag" element={<TagTours />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
             path="/addTour"
