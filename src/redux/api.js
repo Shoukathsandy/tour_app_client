@@ -1,14 +1,7 @@
 import axios from "axios";
+import { API_URL } from "../global";
 
-// const devEnv = process.env.NODE_ENV !== "production";
-
-const { REACT_APP_DEV_API, REACT_APP_PROD_API } = process.env;
-
-const API = axios.create({
-  // baseURL: `${devEnv ? REACT_APP_DEV_API : REACT_APP_PROD_API}`,
-  baseURL: `https://tour-app-mb4f.onrender.com/`,
-
-});
+const API = axios.create({ baseURL: `${API_URL}` });
 
 API.interceptors.request.use((req) => {
   if (localStorage.getItem("profile")) {
@@ -21,6 +14,7 @@ API.interceptors.request.use((req) => {
 
 export const signIn = (formData) => API.post("/users/signin", formData);
 export const signUp = (formData) => API.post("/users/signup", formData);
+console.log(signUp);
 export const googleSignIn = (result) => API.post("/users/googleSignIn", result);
 
 export const createTour = (tourData) => API.post("/tour", tourData);
